@@ -5,44 +5,9 @@ import java.util.*;
 
 public class Search {
 
-    // Need a block object for turns
-    static Block block = new Block();
+    static Block universal = new Block();
 
-    // The inital strings given
-    static Node startNode = null;
-    static Node endNode = null;
-
-    // The Linked List of Parent nodes
-    // Starts with the root nodes
-    // Since birectional search uses two simultaneous BFS trees, need two different
-    // vairables.
-
-    // Top always means top tree for all variables
-    // Bottom always means bottom tree for all variables
-
-    static Node topParentTracker = null;
-    static Node bottomParentTracker = null;
-
-    // The Linked List of child nodes created
-    // No child nodes to start
-    static Node topChildTracker = null;
-    static Node bottomChildTracker = null;
     static Node childTracker = null;
-
-    // The last created child, will use when match is found
-    static Node childNode = null;
-
-    // Turn used to get from parent to the child node.
-    // Turnback is how to go from child to parent node.
-    char turn;
-    char turnBack;
-
-    // Hashmaps for top and bottom node trees
-    // Map<char[], Node> topMap = new HashMap<>();
-    // Map<char[], Node> bottomMap = new HashMap<>();
-
-    static Map<String, Node> topMap = new HashMap<>();
-    static Map<String, Node> bottomMap = new HashMap<>();
 
     public static String BiDirectionalSearch(char[] mixedCube, char[] finalCube) {
 
@@ -52,14 +17,14 @@ public class Search {
             return "Same cube works";
         }
 
-        Search.startNode = new Node(mixedCube);
-        Search.endNode = new Node(finalCube);
+        Node topParentTracker = new Node(mixedCube);
+        Node bottomParentTracker = new Node(finalCube);
 
-        Search.topMap.put(new String(mixedCube), startNode);
-        Search.bottomMap.put(new String(finalCube), endNode);
+        Map<String, Node> topMap = new HashMap<>();
+        Map<String, Node> bottomMap = new HashMap<>();
 
-        Search.topParentTracker = Search.startNode;
-        Search.bottomChildTracker = Search.endNode;
+        topMap.put(new String(mixedCube), topParentTracker);
+        bottomMap.put(new String(finalCube), bottomParentTracker);
 
         char[] solvedBlockString = null;
 
@@ -68,32 +33,27 @@ public class Search {
             // Creating top search tree with children
             // If returns true, find top and bottom nodes and get returnMoveString
             // If false, create bottomchildren
-            solvedBlockString = createChildren(Search.topParentTracker, childNode, topChildTracker, Search.topMap,
-                    Search.bottomMap);
+            solvedBlockString = createChildren(topParentTracker, null, null, topMap, bottomMap);
 
             if (solvedBlockString != null) {
                 return getReturnString(topMap.get(new String(solvedBlockString)),
                         bottomMap.get(new String(solvedBlockString)));
             }
 
-            Search.topParentTracker = Search.childTracker;
-            Search.topChildTracker = null;
+            topParentTracker = Search.childTracker;
             Search.childTracker = null;
 
             // Creating bottom search tree with children
             // If returns true, find top and bottom nodes and get returnMoveString
             // If false, restart while loop and create more top children nodes
-            solvedBlockString = createChildren(Search.bottomParentTracker, childNode, bottomChildTracker,
-                    Search.bottomMap, Search.topMap);
+            solvedBlockString = createChildren(bottomParentTracker, null, null, bottomMap, topMap);
             if (solvedBlockString != null) {
-                return getReturnString(Search.topMap.get(new String(solvedBlockString)),
-                        Search.bottomMap.get(new String(solvedBlockString)));
+                return getReturnString(topMap.get(new String(solvedBlockString)),
+                        bottomMap.get(new String(solvedBlockString)));
             }
 
-            Search.bottomParentTracker = Search.childTracker;
-            bottomChildTracker = null;
-            childNode = null;
-
+            bottomParentTracker = Search.childTracker;
+            Search.childTracker = null;
         }
     }
 
@@ -148,7 +108,7 @@ public class Search {
             return null;
         }
 
-        Block block = new Block();
+        Block block = universal;
         block.setBlockString(parentNode.getBlockString());
 
         // Create 12 children nodes for parent
@@ -187,6 +147,9 @@ public class Search {
                     childNode = newNode;
                 }
 
+                if (sameMap.size() > 69674) {
+                    System.out.println("We here");
+                }
                 sameMap.put(new String(childNode.getBlockString()), childNode);
 
                 // Found match in different map, so search is over.
@@ -233,14 +196,6 @@ public class Search {
 
     }
 
-    /*
-     * If i is even, then it is a regular turn
-     * Adding one will get the prime version
-     * 
-     * If i is odd, then it is a prime turn
-     * Subtracting one will get the regular version
-     */
-
     public static char getTurnBack(char turn) {
         switch (turn) {
             case 'R':
@@ -281,7 +236,7 @@ public class Search {
         }
 
         while (bottom.turn != '\0') {
-            moves = getTurnBack(bottom.getTurn()) + moves;
+            moves = moves + getTurnBack(bottom.getTurn());
             bottom = bottom.getParent();
         }
 

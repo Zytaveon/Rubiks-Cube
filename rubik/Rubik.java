@@ -19,10 +19,14 @@ public class Rubik {
         block.turnBlock('R', 0);
         block.turnBlock('U', 0);
         block.turnBlock('L', 0);
-        // block.turnBlock('L', 0);
-        // block.turnBlock('R', 0);
-        // block.turnBlock('U', 0);
-        // block.turnBlock('L', 0);
+        block.turnBlock('L', 0);
+        block.turnBlock('R', 0);
+        block.turnBlock('U', 0);
+        block.turnBlock('L', 0);
+        block.turnBlock('D', 0);
+        // block.turnBlock('F', 0);
+
+        // block.randomizeBlock(50);
 
         System.out.println(Search.BiDirectionalSearch(block.blockString));
 
