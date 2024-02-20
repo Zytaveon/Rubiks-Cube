@@ -33,6 +33,7 @@ public class Search {
             // Creating top search tree with children
             // If returns true, find top and bottom nodes and get returnMoveString
             // If false, create bottomchildren
+            // solvedBlockString = createChildrenWhile(topParentTracker, topMap, bottomMap);
             solvedBlockString = createChildren(topParentTracker, null, null, topMap, bottomMap);
 
             if (solvedBlockString != null) {
@@ -46,6 +47,8 @@ public class Search {
             // Creating bottom search tree with children
             // If returns true, find top and bottom nodes and get returnMoveString
             // If false, restart while loop and create more top children nodes
+            // solvedBlockString = createChildrenWhile(bottomParentTracker, bottomMap,
+            // topMap);
             solvedBlockString = createChildren(bottomParentTracker, null, null, bottomMap, topMap);
             if (solvedBlockString != null) {
                 return getReturnString(topMap.get(new String(solvedBlockString)),
@@ -161,6 +164,56 @@ public class Search {
 
         return createChildren(parentNode.next, childNode, childrenNodeHead, sameMap, diffMap);
 
+    }
+
+    public static char[] createChildrenWhile(Node parentNode, Map<String, Node> sameMap, Map<String, Node> diffMap) {
+
+        Block block = universal;
+        Node currentNode = parentNode;
+        Node childNodeHead = null;
+        Node currentChild = null;
+
+        Node newNode;
+        char[] newNodeString;
+
+        while (currentNode != null) {
+            block.setBlockString(currentNode.blockString);
+
+            for (int i = 0; i < 12; ++i) {
+                newNodeString = block.turnBlockWithString('\0', i);
+
+                if (!sameMap.containsKey(new String(newNodeString))) {
+                    newNode = new Node(
+                            block.turnBlockWithString('\0', i),
+                            getTurn(i),
+                            parentNode,
+                            null);
+
+                    // No children Nodes created yet.
+                    if (childNodeHead == null) {
+                        childNodeHead = newNode;
+                        currentChild = newNode;
+                        Search.childTracker = newNode;
+                    }
+
+                    else {
+                        currentChild.next = newNode;
+                        currentChild = newNode;
+                    }
+
+                    sameMap.put(new String(currentChild.getBlockString()), currentChild);
+
+                    // Found match in different map, so search is over.
+                    if (diffMap.containsKey(new String(currentChild.blockString))) {
+                        return currentChild.blockString;
+                    }
+                }
+            }
+
+            currentNode = currentNode.next;
+        }
+
+        return null;
     }
 
     public static char getTurn(int i) {

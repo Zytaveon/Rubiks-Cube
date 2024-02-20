@@ -15,18 +15,22 @@ public class Rubik {
         // Search search = new Search();
         Block block = new Block();
 
+        block.turnBlock('D', 0);
         block.turnBlock('L', 0);
-        block.turnBlock('R', 0);
-        block.turnBlock('U', 0);
-        block.turnBlock('L', 0);
-        block.turnBlock('L', 0);
-        block.turnBlock('R', 0);
-        block.turnBlock('U', 0);
+        block.turnBlock('F', 0);
         block.turnBlock('L', 0);
         block.turnBlock('D', 0);
+        // block.turnBlock('R', 0);
+        // block.turnBlock('U', 0);
+        // block.turnBlock('L', 0);
+        // block.turnBlock('D', 0);
         // block.turnBlock('F', 0);
+        // block.turnBlock('L', 0);
+        // block.turnBlock('R', 0);
+        // block.turnBlock('U', 0);
+        // block.turnBlock('L', 0);
 
-        // block.randomizeBlock(50);
+        // block.randomizeBlock(20);
 
         System.out.println(Search.BiDirectionalSearch(block.blockString));
 
