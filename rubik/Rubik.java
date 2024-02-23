@@ -6,8 +6,22 @@ public class Rubik {
 
     /*
      * Things to do:
-     * Add user input for block string.
-     * Create JUnit test cases for turns.
+     * 
+     * -> returnMoves doesn't work for some reason on createChildrenWhile, fix it.
+     * 
+     * -> Bidirectional search works, so implement blockString to double check
+     * blockstring given is valid
+     * 
+     * -> createChildrenWhile works up to 14 moves,
+     * so finding solutions with patterns should work
+     * 
+     * For patterns:
+     * -> implement String[] patterns that bidirectional search goes through
+     * -> add numOfNulls functions
+     * -> Try multiple patterns, not just layer method
+     * -> I don't know how HashMap works, so hopefully trash collector works when
+     * doing different patterns/hashmaps
+     * 
      */
     public static void main(String[] args) {
         System.out.println("-----------------------\n----- Start Rubik -----\n-----------------------\n");
@@ -15,26 +29,32 @@ public class Rubik {
         // Search search = new Search();
         Block block = new Block();
 
-        block.turnBlock('D', 0);
+        block.turnBlock('L', 0);
         block.turnBlock('L', 0);
         block.turnBlock('F', 0);
         block.turnBlock('L', 0);
         block.turnBlock('D', 0);
-        // block.turnBlock('R', 0);
+        block.turnBlock('R', 0);
+        block.turnBlock('U', 0);
+        block.turnBlock('L', 0);
+        block.turnBlock('D', 0);
+        block.turnBlock('F', 0);
+        block.turnBlock('L', 0);
+        block.turnBlock('R', 0);
         // block.turnBlock('U', 0);
         // block.turnBlock('L', 0);
-        // block.turnBlock('D', 0);
-        // block.turnBlock('F', 0);
-        // block.turnBlock('L', 0);
-        // block.turnBlock('R', 0);
+
         // block.turnBlock('U', 0);
         // block.turnBlock('L', 0);
 
         // block.randomizeBlock(20);
+        double startTime = System.currentTimeMillis();
 
         System.out.println(Search.BiDirectionalSearch(block.blockString));
 
-        // System.out.println(Search.BiDirectionalSearch(block.getBlockString()));
+        double endTime = System.currentTimeMillis();
+
+        System.out.println((endTime - startTime) / 1000 + " seconds");
 
         System.out.println("\n-----------------------\n------ End Rubik ------\n-----------------------\n");
     }
@@ -112,9 +132,10 @@ public class Rubik {
          * if direction is '\0' then it will use num 0-11 to turn block
          * if direction is not '\0', then number doesn't matter
          * 
-         * Modifies the block
-         * If not wanting block to be modified, then use turnBlock"Respective turn"
-         * method
+         * turnBlock modifies the block
+         * If not wanting block to be modified, then use turnBlockWithString
+         * Works the same as turnBlock, but gets and returns the string
+         * instead of modifying the block
          * 
          * 
          */

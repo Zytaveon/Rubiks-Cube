@@ -30,11 +30,12 @@ public class Search {
 
         while (true) {
 
-            // Creating top search tree with children
-            // If returns true, find top and bottom nodes and get returnMoveString
-            // If false, create bottomchildren
-            // solvedBlockString = createChildrenWhile(topParentTracker, topMap, bottomMap);
-            solvedBlockString = createChildren(topParentTracker, null, null, topMap, bottomMap);
+            // While loop
+            solvedBlockString = createChildrenWhile(topParentTracker, topMap, bottomMap);
+
+            // Recursion
+            // solvedBlockString = createChildren(topParentTracker, null, null, topMap,
+            // bottomMap);
 
             if (solvedBlockString != null) {
                 return getReturnString(topMap.get(new String(solvedBlockString)),
@@ -44,12 +45,13 @@ public class Search {
             topParentTracker = Search.childTracker;
             Search.childTracker = null;
 
-            // Creating bottom search tree with children
-            // If returns true, find top and bottom nodes and get returnMoveString
-            // If false, restart while loop and create more top children nodes
-            // solvedBlockString = createChildrenWhile(bottomParentTracker, bottomMap,
-            // topMap);
-            solvedBlockString = createChildren(bottomParentTracker, null, null, bottomMap, topMap);
+            // While loop
+            solvedBlockString = createChildrenWhile(bottomParentTracker, bottomMap, topMap);
+
+            // Recursion
+            // solvedBlockString = createChildren(bottomParentTracker, null, null,
+            // bottomMap, topMap);
+
             if (solvedBlockString != null) {
                 return getReturnString(topMap.get(new String(solvedBlockString)),
                         bottomMap.get(new String(solvedBlockString)));
@@ -76,6 +78,10 @@ public class Search {
     }
 
     /*
+     * Recursion works, but once it get to around 8+ moves from solution
+     * I'm pretty sure the callstack gets to about 65000, so can't finish and
+     * returns errors
+     * 
      * Creates children nodes for the parentNodes linked list
      * While creating children it also tries to match the new child node to a node
      * in the diffMap
@@ -150,9 +156,6 @@ public class Search {
                     childNode = newNode;
                 }
 
-                if (sameMap.size() > 69674) {
-                    System.out.println("We here");
-                }
                 sameMap.put(new String(childNode.getBlockString()), childNode);
 
                 // Found match in different map, so search is over.
@@ -177,6 +180,7 @@ public class Search {
         char[] newNodeString;
 
         while (currentNode != null) {
+
             block.setBlockString(currentNode.blockString);
 
             for (int i = 0; i < 12; ++i) {
@@ -186,14 +190,14 @@ public class Search {
                     newNode = new Node(
                             block.turnBlockWithString('\0', i),
                             getTurn(i),
-                            parentNode,
+                            currentNode,
                             null);
 
                     // No children Nodes created yet.
                     if (childNodeHead == null) {
                         childNodeHead = newNode;
                         currentChild = newNode;
-                        Search.childTracker = newNode;
+                        Search.childTracker = childNodeHead;
                     }
 
                     else {
